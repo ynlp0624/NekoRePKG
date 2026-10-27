@@ -87,7 +87,7 @@
       <ul class="hero-meta">
         <li><svg class="i"><use href="#i-check"/></svg> 21.4 MB 单文件，免安装</li>
         <li><svg class="i"><use href="#i-shield"/></svg> 已数字签名 + 时间戳</li>
-        <li><svg class="i"><use href="#i-check"/></svg> 内置 RePKG 0.4.0</li>
+        <li><svg class="i"><use href="#i-check"/></svg> 已内置 RePKG 0.4.0，无需另装</li>
         <li><svg class="i"><use href="#i-check"/></svg> 无需 Python / .NET 运行库</li>
       </ul>
     </div>
@@ -240,7 +240,7 @@
           <tr><th>平台</th><td>Windows 10 / 11 · x64</td></tr>
           <tr><th>体积</th><td>21.4 MB（单文件） / 文件夹版 zip 约 21 MB</td></tr>
           <tr><th>运行库</th><td>无 — 自带 Python 运行时，内置 RePKG 0.4.0</td></tr>
-          <tr><th>解包内核</th><td>RePKG 0.4.0 © NotScuffed（MIT）</td></tr>
+          <tr><th>解包内核</th><td>RePKG 0.4.0 © NotScuffed（MIT）· <a href="https://github.com/NotScuffed/RePKG" target="_blank" rel="noopener">github.com/NotScuffed/RePKG</a></td></tr>
           <tr><th>签名</th><td>CN=猫羽雫 · SHA-256 · DigiCert 时间戳</td></tr>
           <tr><th>SHA-256</th><td class="hash"><code id="sha">BA97844D65398ED1DE2A877D43840D2CFDB35BBF48AF5C472FEE9D94D6941907</code>
             <button class="copy" type="button" data-copy="#sha" aria-label="复制 SHA-256"><svg class="i"><use href="#i-copy"/></svg></button></td></tr>
@@ -287,6 +287,10 @@
       <p>没有单独提供，但界面上所有选项都对应 RePKG 的原生参数，想脚本化可以直接调用 <code>resources\RePKG.exe</code>。图形界面本身就是它的完整封装。</p>
     </details>
     <details class="qa">
+      <summary>需要自己下载 RePKG 0.4.0 吗？</summary>
+      <p>不需要。RePKG 0.4.0（作者 <a href="https://github.com/NotScuffed/RePKG" target="_blank" rel="noopener">NotScuffed</a>，MIT）已经内置在下载包里：单文件版运行时解压到临时目录，文件夹版在 <code>resources\RePKG.exe</code>。设置页还能看到它的版本与路径，也可以换成你自己编译的版本。</p>
+    </details>
+    <details class="qa">
       <summary>GitHub 下载慢 / 打不开怎么办？</summary>
       <p>用国内的 GitCode 镜像：<a href="https://gitcode.com/gcw_YiSvwnI0/NekoRePKG/releases/v1.0.0" target="_blank" rel="noopener">gcw_YiSvwnI0/NekoRePKG</a>，同样提供 exe 与 zip，国内下载通常几秒到十几秒。两个仓库内容一致，SHA-256 也相同。</p>
     </details>
@@ -303,7 +307,7 @@
     <img class="cta-mascot" src="assets/mascot.svg" alt="" width="150" height="150" />
     <div class="cta-copy">
       <h2>要拆哪一个壁纸喵？</h2>
-      <p>到 GitHub Releases 下载最新版；源码、Issue 与更新日志也都在仓库里。</p>
+      <p>到 GitHub Releases 下载最新版；<b>下载包已内置 RePKG 0.4.0 与全部运行库，解压即用，不用另找 RePKG</b>。源码、Issue 与更新日志也都在仓库里。</p>
     </div>
     <div class="cta-act">
       <a class="btn btn-primary btn-lg" href="https://github.com/ynlp0624/NekoRePKG/releases/latest" target="_blank" rel="noopener">
