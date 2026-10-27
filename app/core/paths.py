@@ -7,7 +7,7 @@ from pathlib import Path
 
 APP_NAME = "NekoRePKG"
 APP_TITLE = "NekoRePKG · 猫羽解包器"
-APP_VERSION = "1.0.0"
+APP_VERSION = "1.0.1"
 
 
 def is_frozen() -> bool:

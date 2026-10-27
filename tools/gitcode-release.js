@@ -6,7 +6,7 @@ const path = require('path');
 const TOKEN = process.env.GITCODE_TOKEN;
 const OWNER = 'gcw_YiSvwnI0';
 const REPO = 'NekoRePKG';
-const TAG = 'v1.0.0';
+const TAG = 'v1.0.1';
 const ROOT = path.resolve(__dirname, '..');
 const API = 'https://api.gitcode.com/api/v5';
 
@@ -27,15 +27,7 @@ async function api(method, url, body) {
   return text ? JSON.parse(text) : {};
 }
 
-const BODY = `NekoRePKG v1.0.0 国内镜像
-
-- 单文件版：NekoRePKG.exe（21.4 MB，已签名，含时间戳）
-- 文件夹版：NekoRePKG-win64.zip
-
-GitHub 主仓库：https://github.com/ynlp0624/NekoRePKG
-官网：https://ynlp0624.github.io/NekoRePKG/
-
-Windows 10/11 x64 · 免安装 · 完全离线 · 内置 RePKG 0.4.0（MIT, NotScuffed）`;
+const BODY = fs.readFileSync(path.join(ROOT, 'docs', 'release-notes.md'), 'utf8');
 
 async function ensureRelease() {
   try {

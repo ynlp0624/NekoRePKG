@@ -1,6 +1,11 @@
-## NekoRePKG · 猫羽解包器 v1.0.0
+## NekoRePKG · 猫羽解包器 v1.0.1
 
 Wallpaper Engine 壁纸的图形化 **解包 / 浏览 / 重新打包** 工具。双击即用，全中文，完全离线。
+
+### v1.0.1 更新
+
+- **打包页新增「排除转换出的 PNG」**（默认开启）：回封时如果同目录存在同名 `.tex`，自动跳过解包时生成的 `.png/.jpg/.webp`，避免同一张贴图在包里存两份；原始 `.tex` 正常保留，打包结果会显示排除了几张。
+- 打包前须知补充了这条说明，可随时关掉该开关恢复旧行为。
 
 ### 内置 RePKG 0.4.0（无需另外下载）
 
@@ -27,13 +32,13 @@ RePKG 项目主页：<https://github.com/NotScuffed/RePKG> （MIT，作者 NotSc
 
 | 文件 | 说明 | 大小 |
 |---|---|---|
-| `NekoRePKG.exe` | 单文件版，双击即用 | 21.4 MB |
+| `NekoRePKG.exe` | 单文件版，双击即用 | 约 21 MB |
 | `NekoRePKG-win64.zip` | 文件夹版，启动更快 | 约 21 MB |
 
 ### 签名与校验
 
 - Authenticode 签名者：`CN=猫羽雫, OU=签名部, O=自家工房, C=CN`（SHA-256 + DigiCert 时间戳）
-- SHA-256（单文件版）：`BA97844D65398ED1DE2A877D43840D2CFDB35BBF48AF5C472FEE9D94D6941907`
+- SHA-256（单文件版）：`FCB8083653A6201B8CDD2969168994F231D94CEE5979615391E76BAE63F71DD9`
 - 自签名证书只在本机受信任；其他电脑导入 `root.cer` / `leaf.cer` 后显示为可信（见官网 FAQ）
 - SmartScreen 仍按信誉判断，首次运行点「更多信息 → 仍要运行」
 

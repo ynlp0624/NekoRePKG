@@ -5,7 +5,7 @@ const path = require('path');
 const GH = process.env.GH_TOKEN;
 const GC = process.env.GITCODE_TOKEN;
 const REPO = 'NekoRePKG';
-const TAG = 'v1.0.0';
+const TAG = 'v1.0.1';
 const NOTES = fs.readFileSync(path.resolve(__dirname, '..', 'docs', 'release-notes.md'), 'utf8');
 
 async function fetchJson(url, headers, method, body) {

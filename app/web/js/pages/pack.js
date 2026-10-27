@@ -32,6 +32,7 @@ const st = {
   exclude: DEFAULT_EXCLUDE,
   magic: 'PKGV0021',
   verify: true,
+  excludeConverted: true,
   starting: false,
   expanded: false,
   root: null,
@@ -103,6 +104,15 @@ function template() {
               <span class="field-hint">逗号分隔，支持通配符 <span class="mono">*</span>，默认跳过 project.json 与预览图</span>
             </div>
 
+            <div class="field">
+              <span class="field-label">转换出来的贴图</span>
+              <label class="switch">
+                <input type="checkbox" id="exclude-converted" checked />
+                <span class="switch-track"></span>
+                <span class="switch-txt"><b>排除转换出的 PNG</b><span>同目录存在同名 <span class="mono">.tex</span> 时，跳过解包生成的图片</span></span>
+              </label>
+            </div>
+
             <div class="form-row">
               <div class="field">
                 <label class="field-label" for="magic">魔数（magic）</label>
@@ -155,6 +165,7 @@ function template() {
           </div>
           <div class="col" style="gap:8px;margin-top:var(--s3)">
             <div class="text-sm dim">· 源文件夹里最好保留 <span class="mono">scene.json</span>，否则壁纸加载会失败。</div>
+            <div class="text-sm dim">· 解包生成的 PNG 默认不参与回封（同目录有同名 <span class="mono">.tex</span> 时自动跳过，可在上方关闭）。</div>
             <div class="text-sm dim">· 想验证效果：打包完成后用「解包」把新 pkg 拆出来对比。</div>
             <div class="text-sm dim">· 打包与解包共用同一个并发队列。</div>
           </div>
@@ -238,6 +249,11 @@ function resultBody() {
       <div class="info-item"><span class="info-k">耗时</span><span class="info-v num">${fmtElapsed(job.elapsed || 0)}</span></div>
     </div>
     <div class="result-path" title="${esc(outPkg)}">${esc(midEllipsis(outPkg, 74))}</div>
+    ${
+      ((job.result && job.result.excluded_converted) || 0) > 0
+        ? `<div class="text-sm muted">${icon('check', 12)} 已排除 ${fmtNum(job.result.excluded_converted)} 张由 <span class="mono">.tex</span> 转换出的图片（原始 .tex 保留）</div>`
+        : ''
+    }
     ${
       verify
         ? `<div class="notice ${verify.ok ? 'is-info' : ''}" style="padding:8px 10px">
@@ -336,7 +352,12 @@ async function startPack() {
     const res = await api.pack({
       source_dir: st.source.trim(),
       output_pkg: st.output.trim(),
-      options: { exclude, magic: st.magic.trim() || 'PKGV0021', verify: st.verify },
+      options: {
+        exclude,
+        magic: st.magic.trim() || 'PKGV0021',
+        verify: st.verify,
+        exclude_converted_pngs: st.excludeConverted,
+      },
     });
     if (res && res.job_id) {
       toast('ok', '已加入打包队列');
@@ -370,6 +391,7 @@ export default {
     st.exclude = DEFAULT_EXCLUDE;
     st.magic = MAGICS[0];
     st.verify = true;
+    st.excludeConverted = true;
     st.starting = false;
     st.lastSource = '';
 
@@ -380,6 +402,7 @@ export default {
     const excludeInput = $('#exclude', root);
     const magicInput = $('#magic', root);
     const verifyInput = $('#verify', root);
+    const excludeConvertedInput = $('#exclude-converted', root);
 
     if (ctx.params && ctx.params.dir) {
       st.source = ctx.params.dir;
@@ -407,6 +430,10 @@ export default {
     verifyInput &&
       verifyInput.addEventListener('change', () => {
         st.verify = verifyInput.checked;
+      });
+    excludeConvertedInput &&
+      excludeConvertedInput.addEventListener('change', () => {
+        st.excludeConverted = excludeConvertedInput.checked;
       });
 
     const dz = $('#pd-z', root);

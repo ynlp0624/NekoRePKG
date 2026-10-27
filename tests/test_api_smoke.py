@@ -18,7 +18,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from app.api import Api  # noqa: E402
-from app.core import paths, repkg as repkg_mod  # noqa: E402
+from app.core import paths, pkgfmt  # noqa: E402
+from app.core import repkg as repkg_mod  # noqa: E402
 from app.core.config import Settings  # noqa: E402
 from app.core.jobs import JobManager  # noqa: E402
 from app.server import ApiServer, Hub  # noqa: E402
@@ -134,12 +135,16 @@ def main() -> int:
         src = Path(tempfile.mkdtemp(prefix="nekorepkg_pack_"))
         (src / "materials").mkdir()
         (src / "materials" / "layer.json").write_text('{"a":1}', encoding="utf-8")
+        (src / "materials" / "a.tex").write_bytes(b"TEXFAKE")
+        (src / "materials" / "a.png").write_bytes(b"PNGFAKE-from-tex")
+        (src / "materials" / "b.png").write_bytes(b"PNGFAKE-standalone")
         (src / "scene.json").write_text("{}", encoding="utf-8")
         (src / "project.json").write_text("{}", encoding="utf-8")
         target = Path(tempfile.mkdtemp(prefix="nekorepkg_pkg_")) / "scene.pkg"
         status, res = request(base, "POST", "/api/jobs/pack", {
             "source_dir": str(src), "output_pkg": str(target),
-            "options": {"exclude": ["project.json"], "magic": "PKGV0021", "verify": True},
+            "options": {"exclude": ["project.json"], "magic": "PKGV0021", "verify": True,
+                        "exclude_converted_pngs": True},
         })
         check("打包入队", status == 200, str(res))
         job = wait_job(base, res["job_id"])
@@ -147,6 +152,24 @@ def main() -> int:
         check("pkg 已生成", target.exists() and target.stat().st_size > 0)
         check("校验通过", bool(job.get("result", {}).get("verify", {}).get("ok")),
               str(job.get("result", {}).get("verify")))
+
+        names = {e.path.replace("\\", "/") for e in pkgfmt.iter_entries(str(target))}
+        check("同目录同名 .tex 的 png 被排除", "materials/a.png" not in names, str(sorted(names)))
+        check("原始 .tex 保留", "materials/a.tex" in names, str(sorted(names)))
+        check("无同名 .tex 的 png 保留", "materials/b.png" in names, str(sorted(names)))
+        check("结果里报告排除数量", (job.get("result") or {}).get("excluded_converted") == 1,
+              str((job.get("result") or {}).get("excluded_converted")))
+
+        target2 = Path(tempfile.mkdtemp(prefix="nekorepkg_pkg2_")) / "scene_all.pkg"
+        status, res = request(base, "POST", "/api/jobs/pack", {
+            "source_dir": str(src), "output_pkg": str(target2),
+            "options": {"exclude": ["project.json"], "magic": "PKGV0021", "verify": False,
+                        "exclude_converted_pngs": False},
+        })
+        job2 = wait_job(base, res["job_id"])
+        names2 = {e.path.replace("\\", "/") for e in pkgfmt.iter_entries(str(target2))}
+        check("关闭开关后 png 被保留", "materials/a.png" in names2, str(sorted(names2)))
+        check("关闭开关时排除数量为 0", (job2.get("result") or {}).get("excluded_converted") == 0)
 
         print("[7] 设置")
         status, res = request(base, "POST", "/api/settings", {"settings": {"theme": "pro", "concurrency": 1}})

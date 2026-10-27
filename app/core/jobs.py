@@ -602,9 +602,17 @@ class JobManager:
     def _run_pack(self, job: Job) -> None:
         output_pkg = Path(job.extras["output_pkg"])
         options = job.extras.get("options", {})
-        exclude = options.get("exclude") or ["project.json", "preview.jpg", "preview.png", "*.tex-json"]
+        exclude = list(options.get("exclude") or ["project.json", "preview.jpg", "preview.png", "*.tex-json"])
         magic = (options.get("magic") or "PKGV0021").strip().upper() or "PKGV0021"
         output_pkg.parent.mkdir(parents=True, exist_ok=True)
+
+        # 默认排除「由 .tex 转换出来的图片」：同目录下存在同名 .tex 的 png/jpg/webp…
+        converted_rels: list[str] = []
+        if options.get("exclude_converted_pngs", True):
+            converted_rels = _converted_image_relpaths(Path(job.input))
+            if converted_rels:
+                exclude.extend(converted_rels)
+                self._log(job, f"将排除 {len(converted_rels)} 张由 .tex 转换出的图片（保留原始 .tex）", "info")
 
         # 预统计总字节（按排除规则）
         total_bytes = 0
@@ -651,6 +659,7 @@ class JobManager:
             "pkg_path": str(output_pkg),
             "output_pkg": str(output_pkg),
             "skipped": stats.get("skipped", []),
+            "excluded_converted": len(converted_rels),
             "warnings": job.warnings,
         }
         if options.get("verify", True):
@@ -698,6 +707,27 @@ class JobManager:
 
 
 # ------------------------------------------------------------------ utilities
+_IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".webp", ".bmp", ".gif"}
+
+
+def _converted_image_relpaths(root: Path) -> list[str]:
+    """找出「同目录下存在同名 .tex」的图片（即解包时由 .tex 转换出来的产物）。"""
+    found: list[str] = []
+    try:
+        for dirpath, _dirnames, filenames in os.walk(root):
+            stems = {name.rsplit(".", 1)[0].lower() for name in filenames if name.lower().endswith(".tex")}
+            if not stems:
+                continue
+            for name in filenames:
+                suffix = Path(name).suffix.lower()
+                if suffix in _IMAGE_EXTS and name.rsplit(".", 1)[0].lower() in stems:
+                    rel = str((Path(dirpath) / name).relative_to(root)).replace("/", "\\")
+                    found.append(rel)
+    except OSError:
+        pass
+    return found
+
+
 def _excluded(rel_path: str, patterns: list[str]) -> bool:
     rel = rel_path.replace("\\", "/")
     name = rel.rsplit("/", 1)[-1]
