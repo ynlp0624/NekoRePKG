@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="NekoRePKG 猫耳标志">
+  <defs>
+    <linearGradient id="body" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#96c4ff"/>
+      <stop offset="0.52" stop-color="#6fa5fd"/>
+      <stop offset="1" stop-color="#5585ea"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 猫耳 -->
+  <path d="M13 21 L13.6 6.6 Q13.8 3 17 4.7 L31 12.2 Z" fill="#6fa5fd" stroke="#6fa5fd" stroke-width="4.5" stroke-linejoin="round"/>
+  <path d="M51 21 L50.4 6.6 Q50.2 3 47 4.7 L33 12.2 Z" fill="#6fa5fd" stroke="#6fa5fd" stroke-width="4.5" stroke-linejoin="round"/>
+  <path d="M17.6 15.6 L17.9 8.6 L26.4 13.4 Z" fill="#ffc0dc" opacity="0.92"/>
+  <path d="M46.4 15.6 L46.1 8.6 L37.6 13.4 Z" fill="#ffc0dc" opacity="0.92"/>
+
+  <!-- 圆角脸 -->
+  <rect x="5" y="14" width="54" height="46" rx="16.5" fill="url(#body)"/>
+
+  <!-- 眼 -->
+  <ellipse cx="24" cy="30.5" rx="3.2" ry="3.8" fill="#22315a"/>
+  <ellipse cx="40" cy="30.5" rx="3.2" ry="3.8" fill="#22315a"/>
+  <circle cx="25.2" cy="29.2" r="1.15" fill="#ffffff"/>
+  <circle cx="41.2" cy="29.2" r="1.15" fill="#ffffff"/>
+
+  <!-- 腮红 -->
+  <ellipse cx="17" cy="38" rx="3.6" ry="2.1" fill="#ff9ec4" opacity="0.72"/>
+  <ellipse cx="47" cy="38" rx="3.6" ry="2.1" fill="#ff9ec4" opacity="0.72"/>
+
+  <!-- 笑口 + 虎牙 -->
+  <path d="M28.6 38.6 q3.4 3.6 6.8 0" stroke="#22315a" stroke-width="1.9" fill="none" stroke-linecap="round"/>
+  <path d="M31.2 39.4 l1.3 2.7 l1.3 -2.7 Z" fill="#ffffff"/>
+
+  <!-- 水欧泊发饰 -->
+  <circle cx="44.6" cy="21.4" r="2.6" fill="#ffffff" opacity="0.92"/>
+  <circle cx="43.9" cy="20.7" r="0.95" fill="#cfe3ff"/>
+  <path d="M15 21.8 l0.7 1.9 1.9 0.7 -1.9 0.7 -0.7 1.9 -0.7 -1.9 -1.9 -0.7 1.9 -0.7 Z" fill="#ffffff" opacity="0.55"/>
+</svg>

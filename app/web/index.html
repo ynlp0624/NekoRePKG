@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="moe">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <title>NekoRePKG · 猫羽解包器</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="css/theme.css" />
+  <link rel="stylesheet" href="css/app.css" />
+  <script>
+    /* 首帧前套用主题，避免闪烁；正式状态仍以 /api/state 为准 */
+    (function () {
+      try {
+        var q = new URLSearchParams(location.search);
+        var t = q.get('theme') || localStorage.getItem('nekorepkg.theme') || 'moe';
+        if (t === 'pro' || t === 'moe') document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <a class="brand" href="#/extract" aria-label="NekoRePKG 猫羽解包器">
+        <img class="brand-logo" src="assets/logo.svg" alt="" width="32" height="32" />
+        <span class="brand-txt">
+          <strong>NekoRePKG</strong>
+          <em>猫羽解包器</em>
+        </span>
+      </a>
+
+      <div class="topbar-gap"></div>
+
+      <button class="status-pill" id="repkg-pill" type="button" title="RePKG 内核状态（点击前往设置）">
+        <span class="status-pill-dot" id="repkg-dot"></span>
+        <span class="status-pill-txt" id="repkg-txt">检测中…</span>
+      </button>
+
+      <button class="icon-btn" id="theme-toggle" type="button" title="切换主题（萌系 / 简洁）" aria-label="切换主题"></button>
+
+      <button class="job-chip" id="job-badge" type="button" title="运行中的任务（点击查看任务面板）" aria-label="运行中的任务">
+        <span class="job-chip-count" id="job-badge-count">0</span>
+      </button>
+
+      <svg class="paw-mark" viewBox="0 0 100 100" aria-hidden="true">
+        <g fill="currentColor">
+          <ellipse cx="24" cy="38" rx="8.5" ry="11.5" transform="rotate(-18 24 38)" />
+          <ellipse cx="43" cy="26" rx="8.5" ry="11.5" transform="rotate(-5 43 26)" />
+          <ellipse cx="63" cy="27" rx="8.5" ry="11.5" transform="rotate(7 63 27)" />
+          <ellipse cx="80" cy="41" rx="8.5" ry="11.5" transform="rotate(20 80 41)" />
+          <path d="M52 50c14.5 0 27 9.5 27 21 0 10.5-8.5 16.5-18 16.5-4.8 0-6.5-2.2-9-2.2s-4.2 2.2-9 2.2c-9.5 0-18-6-18-16.5 0-11.5 12.5-21 27-21z" />
+        </g>
+      </svg>
+    </header>
+
+    <div class="workspace">
+      <nav class="sidebar" aria-label="主导航">
+        <ul class="nav" id="nav-list"></ul>
+        <div class="sidebar-note" id="sidebar-note">
+          <span class="kbd">Ctrl</span><span class="kbd">O</span>
+          <span class="sidebar-note-txt">快速选择文件</span>
+        </div>
+        <div class="sidebar-paws" aria-hidden="true">
+          <svg viewBox="0 0 100 100"><g fill="currentColor"><ellipse cx="24" cy="38" rx="8.5" ry="11.5" transform="rotate(-18 24 38)"/><ellipse cx="43" cy="26" rx="8.5" ry="11.5"/><ellipse cx="63" cy="27" rx="8.5" ry="11.5" transform="rotate(7 63 27)"/><ellipse cx="80" cy="41" rx="8.5" ry="11.5" transform="rotate(20 80 41)"/><path d="M52 50c14.5 0 27 9.5 27 21 0 10.5-8.5 16.5-18 16.5-4.8 0-6.5-2.2-9-2.2s-4.2 2.2-9 2.2c-9.5 0-18-6-18-16.5 0-11.5 12.5-21 27-21z"/></g></svg>
+          <svg viewBox="0 0 100 100"><g fill="currentColor"><ellipse cx="24" cy="38" rx="8.5" ry="11.5" transform="rotate(-18 24 38)"/><ellipse cx="43" cy="26" rx="8.5" ry="11.5"/><ellipse cx="63" cy="27" rx="8.5" ry="11.5" transform="rotate(7 63 27)"/><ellipse cx="80" cy="41" rx="8.5" ry="11.5" transform="rotate(20 80 41)"/><path d="M52 50c14.5 0 27 9.5 27 21 0 10.5-8.5 16.5-18 16.5-4.8 0-6.5-2.2-9-2.2s-4.2 2.2-9 2.2c-9.5 0-18-6-18-16.5 0-11.5 12.5-21 27-21z"/></g></svg>
+        </div>
+      </nav>
+
+      <main class="content" id="view" tabindex="-1"></main>
+    </div>
+
+    <footer class="statusbar">
+      <span class="sb-item" id="sb-version">NekoRePKG</span>
+      <span class="sb-sep">·</span>
+      <span class="sb-item" id="sb-jobs">无任务</span>
+      <span class="sb-grow"></span>
+      <span class="sb-item sb-conn" id="sb-conn"><i class="sb-dot"></i><span>连接中</span></span>
+      <span class="sb-sep">·</span>
+      <span class="sb-item sb-hint" id="sb-hint">就绪</span>
+      <span class="sb-sep">·</span>
+      <span class="sb-item sb-mode" id="sb-mode">真实模式</span>
+    </footer>
+  </div>
+
+  <div class="toast-host" id="toast-host" role="status" aria-live="polite" aria-atomic="false"></div>
+  <div id="overlay-host"></div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+ VSVersionInfo(
+  ffi=FixedFileInfo(
+    filevers=(1, 0, 0, 0),
+    prodvers=(1, 0, 0, 0),
+    mask=0x3f,
+    flags=0x0,
+    OS=0x40004,
+    fileType=0x1,
+    subtype=0x0,
+    date=(0, 0)
+  ),
+  kids=[
+    StringFileInfo(
+      [
+        StringTable(
+          '080404B0',
+          [
+            StringStruct('CompanyName', 'NekoRePKG'),
+            StringStruct('FileDescription', 'NekoRePKG · 猫羽解包器'),
+            StringStruct('FileVersion', '1.0.0'),
+            StringStruct('InternalName', 'NekoRePKG'),
+            StringStruct('LegalCopyright', 'MIT License. Powered by RePKG (NotScuffed).'),
+            StringStruct('OriginalFilename', 'NekoRePKG.exe'),
+            StringStruct('ProductName', 'NekoRePKG · 猫羽解包器'),
+            StringStruct('ProductVersion', '1.0.0')
+          ]
+        )
+      ]
+    ),
+    VarFileInfo([VarStruct('Translation', [2052, 1200])])
+  ]
+)

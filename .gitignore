@@ -1,0 +1,22 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# 构建产物
+dist/
+build/work-onefile/
+build/work-onedir/
+build/dist-onedir/
+build/*.spec
+
+# 测试夹具（可重新生成）
+tests/_work/
+
+# 本地临时
+shots/
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
