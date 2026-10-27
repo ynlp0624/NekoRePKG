@@ -6,6 +6,7 @@
 - **官网**：<https://ynlp0624.github.io/NekoRePKG/>（静态页在 `docs/`，GitHub Pages 托管）
 - **下载**：<https://github.com/ynlp0624/NekoRePKG/releases/latest>
 - **仓库**：<https://github.com/ynlp0624/NekoRePKG>
+- **国内镜像**：<https://gitcode.com/gcw_YiSvwnI0/NekoRePKG>（Release 附件下载约 6 MB/s）
 
 ![icon](build/icon.png)
 
