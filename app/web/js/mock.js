@@ -496,7 +496,7 @@ function stateSnapshot() {
     ok: true,
     app: {
       name: 'NekoRePKG',
-      version: '1.0.0',
+      version: '1.0.1',
       platform: 'windows',
       log_dir: LOG_DIR,
       config_path: j(CONFIG_DIR, 'config.json'),
