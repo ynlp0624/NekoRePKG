@@ -6,7 +6,7 @@ const path = require('path');
 const TOKEN = process.env.GITCODE_TOKEN;
 const OWNER = 'gcw_YiSvwnI0';
 const REPO = 'NekoRePKG';
-const TAG = 'v1.0.1';
+const TAG = 'v1.1.0';
 const ROOT = path.resolve(__dirname, '..');
 const API = 'https://api.gitcode.com/api/v5';
 

@@ -81,15 +81,17 @@ def main() -> int:
         if job["status"] != "done":
             print(json.dumps(job, ensure_ascii=False)[:600])
             return 1
-        images = sorted((p for p in out_dir.rglob("*") if p.suffix.lower() in (".png", ".jpg", ".jpeg", ".webp")),
+        result = job.get("result") or {}
+        actual_out = Path(result.get("output_dir") or out_dir)
+        print(f"   子文件夹: {result.get('folder')!r} -> {actual_out}")
+        images = sorted((p for p in actual_out.rglob("*") if p.suffix.lower() in (".png", ".jpg", ".jpeg", ".webp")),
                         key=lambda p: p.stat().st_size, reverse=True)
-        texjson = list(out_dir.rglob("*.tex-json"))
+        texjson = list(actual_out.rglob("*.tex-json"))
         print(f"   图片 {len(images)} 张，tex-json {len(texjson)} 个")
-        print(f"   输出目录: {out_dir}")
         for p in images[:4]:
-            print(f"     {p.relative_to(out_dir)}  {p.stat().st_size / 1024:.0f} KB")
+            print(f"     {p.relative_to(actual_out)}  {p.stat().st_size / 1024:.0f} KB")
 
-        gallery = get(base, f"/api/gallery?dir={urllib.parse.quote(str(out_dir))}&limit=100")
+        gallery = get(base, f"/api/gallery?dir={urllib.parse.quote(str(actual_out))}&limit=100")
         print(f"== 画廊: total={gallery.get('total')}")
         if gallery.get("images"):
             first = gallery["images"][0]
@@ -98,9 +100,9 @@ def main() -> int:
             Path("E:\\repkg\\shots\\real-thumb.jpg").write_bytes(thumb)
             print(f"   缩略图 OK: {first['name']} {len(thumb)} bytes")
 
-        pkg_out = out_dir.parent / "repack.pkg"
+        pkg_out = actual_out.parent / "repack.pkg"
         res = post(base, "/api/jobs/pack", {
-            "source_dir": str(out_dir), "output_pkg": str(pkg_out),
+            "source_dir": str(actual_out), "output_pkg": str(pkg_out),
             "options": {"exclude": ["project.json", "preview.jpg", "preview.png", "*.tex-json"],
                         "verify": True},
         })

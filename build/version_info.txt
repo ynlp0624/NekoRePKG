@@ -17,12 +17,12 @@
           [
             StringStruct('CompanyName', 'NekoRePKG'),
             StringStruct('FileDescription', 'NekoRePKG · 猫羽解包器'),
-            StringStruct('FileVersion', '1.0.1'),
+            StringStruct('FileVersion', '1.1.0'),
             StringStruct('InternalName', 'NekoRePKG'),
             StringStruct('LegalCopyright', 'MIT License. Powered by RePKG (NotScuffed).'),
             StringStruct('OriginalFilename', 'NekoRePKG.exe'),
             StringStruct('ProductName', 'NekoRePKG · 猫羽解包器'),
-            StringStruct('ProductVersion', '1.0.1')
+            StringStruct('ProductVersion', '1.1.0')
           ]
         )
       ]

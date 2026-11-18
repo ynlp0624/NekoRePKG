@@ -114,6 +114,64 @@ def main() -> int:
         check("产出文件", any(f.is_file() for f in files), str(files[:5]))
         check("进度 100%", job["progress"]["percent"] == 100.0, str(job["progress"]))
 
+        print("[3b] 输出子文件夹命名")
+        import shutil
+
+        ws_dir = Path(tempfile.mkdtemp(prefix="nekorepkg_ws_")) / "2595877264"
+        ws_dir.mkdir(parents=True)
+        shutil.copyfile(FIXTURE, ws_dir / "scene.pkg")
+        long_title = "[4K]Win11娘 鼠标特效+音频可视化+日期时间[Mouse Effect+Visualizer+Date&time]"
+        (ws_dir / "project.json").write_text(json.dumps({"title": long_title}, ensure_ascii=False), encoding="utf-8")
+
+        out2 = tempfile.mkdtemp(prefix="nekorepkg_out2_")
+        status, res = request(base, "POST", "/api/jobs/extract", {
+            "inputs": [str(ws_dir / "scene.pkg")],
+            "output_dir": out2,
+            "options": {"no_tex_convert": True, "overwrite": True},
+        })
+        job2 = wait_job(base, res["job_ids"][0])
+        check("auto 模式：工坊包用 ID 建子目录",
+              (job2.get("result") or {}).get("folder") == "2595877264" and (Path(out2) / "2595877264").is_dir(),
+              str(job2.get("result")))
+        check("auto 模式：output_dir 指向子目录",
+              Path((job2.get("result") or {}).get("output_dir", "")).name == "2595877264",
+              str(job2.get("result")))
+
+        title_dir = Path(tempfile.mkdtemp(prefix="nekorepkg_t_")) / "my wallpaper"
+        title_dir.mkdir(parents=True)
+        shutil.copyfile(FIXTURE, title_dir / "scene.pkg")
+        (title_dir / "project.json").write_text(json.dumps({"title": long_title}, ensure_ascii=False), encoding="utf-8")
+        out3 = tempfile.mkdtemp(prefix="nekorepkg_out3_")
+        status, res = request(base, "POST", "/api/jobs/extract", {
+            "inputs": [str(title_dir / "scene.pkg")],
+            "output_dir": out3,
+            "options": {"no_tex_convert": True, "folder_naming": "title"},
+        })
+        job3 = wait_job(base, res["job_ids"][0])
+        check("title 模式：去掉 [4K] 等标签并精简",
+              (job3.get("result") or {}).get("folder") == "Win11娘 鼠标特效+音频可视化+日期时间",
+              str((job3.get("result") or {}).get("folder")))
+
+        out4 = tempfile.mkdtemp(prefix="nekorepkg_out4_")
+        status, res = request(base, "POST", "/api/jobs/extract", {
+            "inputs": [str(title_dir / "scene.pkg")],
+            "output_dir": out4,
+            "options": {"no_tex_convert": True, "folder_naming": "none"},
+        })
+        job4 = wait_job(base, res["job_ids"][0])
+        check("none 模式：不建子文件夹", (job4.get("result") or {}).get("folder") is None,
+              str(job4.get("result")))
+        check("none 模式：直接输出到目标目录",
+              Path((job4.get("result") or {}).get("output_dir", "")) == Path(out4),
+              str(job4.get("result")))
+
+        status, res = request(base, "POST", "/api/jobs/extract", {
+            "inputs": [str(title_dir / "scene.pkg")],
+            "output_dir": out4,
+            "options": {"folder_naming": "bogus"},
+        })
+        check("非法命名模式返回 400", status == 400, str(res))
+
         print("[4] 日志 + SSE 兼容")
         status, logs = request(base, "GET", f"/api/jobs/log?id={job['id']}&after=0")
         check("日志 200", status == 200)

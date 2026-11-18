@@ -19,7 +19,7 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qs, quote
 
-from app.core import dialogs, paths, pkgfmt, scanner
+from app.core import dialogs, naming, paths, pkgfmt, scanner
 from app.core import repkg as repkg_mod
 from app.core.config import Settings
 from app.core.jobs import JobError, JobManager
@@ -406,6 +406,10 @@ class Api:
             value = options.get(key)
             if value is not None and not isinstance(value, str):
                 raise HttpError(400, f"{key} 必须是字符串")
+        mode = str(options.get("folder_naming") or "auto").strip().lower()
+        if mode not in naming.MODES:
+            raise HttpError(400, f"folder_naming 只能是 {' / '.join(naming.MODES)}")
+        options["folder_naming"] = mode
         ids, rejected = self.jobs.create_extract_jobs([str(x) for x in inputs], str(output_dir), options)
         if not ids and rejected:
             raise HttpError(400, rejected[0]["reason"])

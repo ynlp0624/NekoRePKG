@@ -35,6 +35,7 @@ const DEFAULT_OPTIONS = {
   use_name: false,
   no_tex_convert: false,
   overwrite: false,
+  folder_naming: 'auto',
 };
 
 const st = {
@@ -94,7 +95,7 @@ function template() {
           <div class="card-head">
             <div class="card-head-l">
               <div class="card-title">${icon('save', 17)}输出与选项</div>
-              <div class="card-desc">每个包会在输出目录下单独建一个文件夹</div>
+              <div class="card-desc">每个包会输出到独立子文件夹（默认用壁纸 ID，没有 ID 时用精简作品名）</div>
             </div>
           </div>
 
@@ -141,6 +142,20 @@ function template() {
                     <input class="input is-mono" id="ignore-exts" type="text" placeholder=".mp4, .webm" spellcheck="false" />
                     <span class="field-hint">逗号分隔，会自动补上「.」</span>
                   </div>
+                </div>
+                <div class="field" style="margin-bottom:var(--s3)">
+                  <label class="field-label" for="folder-naming">输出子文件夹命名</label>
+                  <div class="select-wrap">
+                    <select class="select" id="folder-naming">
+                      <option value="auto">自动：工坊 ID，否则精简作品名</option>
+                      <option value="id">工坊 ID（如 2595877264）</option>
+                      <option value="title">精简作品名</option>
+                      <option value="id_title">ID + 名称</option>
+                      <option value="pkg">包文件名（scene.pkg → scene）</option>
+                      <option value="none">不建子文件夹（旧行为）</option>
+                    </select>
+                  </div>
+                  <span class="field-hint">作品名会去掉 [4K]、[长副标题] 这类标签，最多 40 字；工坊包直接用工坊目录名当 ID</span>
                 </div>
                 <div class="opt-grid">
                   <label class="checkbox"><input type="checkbox" data-opt="single_dir" /> 全部输出到单目录</label>
@@ -459,9 +474,24 @@ function renderOutHint() {
   const hint = $('#out-hint', st.root);
   if (!hint) return;
   const def = (S.settings && S.settings.default_output) || '';
-  if (!st.output) hint.innerHTML = '<span class="is-err">请先选择输出目录</span>';
-  else if (def && st.output === def) hint.textContent = '使用设置里的默认输出目录';
-  else hint.textContent = '每个包会在该目录下新建同名文件夹';
+  if (!st.output) {
+    hint.innerHTML = '<span class="is-err">请先选择输出目录</span>';
+    return;
+  }
+  const mode = st.options.folder_naming || 'auto';
+  const labels = {
+    auto: '自动（工坊 ID / 精简作品名）',
+    id: '工坊 ID',
+    title: '精简作品名',
+    id_title: 'ID + 名称',
+    pkg: '包文件名',
+    none: '不建子文件夹',
+  };
+  const tail =
+    mode === 'none'
+      ? '不建子文件夹，文件直接解到该目录'
+      : `每个包会新建子文件夹 · ${labels[mode] || labels.auto}`;
+  hint.textContent = (def && st.output === def ? '使用设置里的默认输出目录 · ' : '') + tail;
 }
 
 async function startExtract() {
@@ -598,6 +628,7 @@ export default {
       if (outInput) outInput.value = p.output;
       renderOutHint();
     }
+    if (p.adv === '1') st.advancedOpen = true;
 
     /* 拖放 */
     const dz = $('#dz', root);
@@ -806,6 +837,15 @@ export default {
         updateAdvBadge();
       });
     }
+    const folderNaming = $('#folder-naming', root);
+    if (folderNaming) {
+      folderNaming.value = st.options.folder_naming || 'auto';
+      folderNaming.addEventListener('change', () => {
+        st.options.folder_naming = folderNaming.value;
+        updateAdvBadge();
+        renderOutHint();
+      });
+    }
     const updateAdvBadge = () => {
       const badge = $('#adv-badge', root);
       if (!badge) return;
@@ -817,7 +857,8 @@ export default {
         !st.options.copy_project ||
         st.options.use_name ||
         st.options.no_tex_convert ||
-        st.options.overwrite;
+        st.options.overwrite ||
+        (st.options.folder_naming && st.options.folder_naming !== 'auto');
       badge.textContent = changed ? '已修改' : '默认';
       badge.className = changed ? 'badge badge-running' : 'badge';
     };

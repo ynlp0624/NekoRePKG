@@ -11,7 +11,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
 
-from . import paths, pkgfmt, repkg
+from . import naming, paths, pkgfmt, repkg
 from .config import Settings
 
 MAX_LOG_LINES = 5000
@@ -478,8 +478,26 @@ class JobManager:
             raise JobError(info.get("error") or "没有可用的 RePKG.exe，请到「设置」里指定")
         exe = str(info["path"])
         options = job.extras.get("options", {})
-        out_dir = job.output_dir
+        base_out = Path(job.output_dir)
+
+        # 每个 .pkg 单独建子文件夹：工坊 ID / 精简作品名 / 包名（目录输入交给 RePKG 原生行为）
+        sub_folder = None
+        if not job.extras.get("is_dir"):
+            try:
+                sub_folder = naming.resolve_folder(
+                    job.input,
+                    str(options.get("folder_naming") or "auto"),
+                    options.get("folder_name_max") or naming.DEFAULT_MAX_LEN,
+                )
+            except Exception:
+                sub_folder = None
+
+        out_dir = str(base_out / sub_folder) if sub_folder else str(base_out)
         Path(out_dir).mkdir(parents=True, exist_ok=True)
+        if sub_folder:
+            self._log(job, f"输出子文件夹：{sub_folder}")
+        else:
+            self._log(job, "直接输出到目标目录（未建子文件夹）")
 
         job.total = self._estimate_extract_total(job)
         if job.total:
@@ -539,6 +557,7 @@ class JobManager:
             "files": files or (extracted + skipped),
             "bytes": bytes_written,
             "output_dir": out_dir,
+            "folder": sub_folder,
             "extracted": extracted,
             "skipped": skipped,
             "copied": copied,

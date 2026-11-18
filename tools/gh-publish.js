@@ -9,7 +9,7 @@ const REPO = 'NekoRePKG';
 const ROOT = path.resolve(__dirname, '..');
 const SITE_URL = `https://${OWNER}.github.io/${REPO}/`;
 const REPO_URL = `https://github.com/${OWNER}/${REPO}`;
-const VERSION = 'v1.0.1';
+const VERSION = 'v1.1.0';
 
 if (!TOKEN) {
   console.error('GH_TOKEN missing');
