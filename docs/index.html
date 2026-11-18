@@ -288,6 +288,10 @@
       <p>没有单独提供，但界面上所有选项都对应 RePKG 的原生参数，想脚本化可以直接调用 <code>resources\RePKG.exe</code>。图形界面本身就是它的完整封装。</p>
     </details>
     <details class="qa">
+      <summary>解包后为什么多了一层子文件夹？</summary>
+      <p>默认按「工坊 ID / 精简作品名」给每个包建独立子文件夹，避免不同壁纸的文件混在一起：工坊包用目录数字 ID（如 <code>2595877264</code>），普通包用去掉 <code>[4K]</code>、<code>[长英文副标题]</code> 后的作品名（最多 40 字）。解包页「高级选项 → 输出子文件夹命名」可改成工坊 ID、作品名、ID+名称、包文件名，或选「不建子文件夹」恢复旧行为。</p>
+    </details>
+    <details class="qa">
       <summary>需要自己下载 RePKG 0.4.0 吗？</summary>
       <p>不需要。RePKG 0.4.0（作者 <a href="https://github.com/NotScuffed/RePKG" target="_blank" rel="noopener">NotScuffed</a>，MIT）已经内置在下载包里：单文件版运行时解压到临时目录，文件夹版在 <code>resources\RePKG.exe</code>。设置页还能看到它的版本与路径，也可以换成你自己编译的版本。</p>
     </details>
